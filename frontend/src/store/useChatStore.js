@@ -63,12 +63,19 @@ export const useChatStore = create((set, get) => ({
     },
 
     subscribeToNewMessages: () => {
-        const selectedUser = get();
-        if(!selectedUser) return;
-        const socket = useAuthStore.getState().socket;
-        if(!socket) return;
+        const { selectedUser } = get();
+        if (!selectedUser) return;
+        const { socket, authUser } = useAuthStore.getState();
+        if (!socket) return;
         socket.on("newMessage", (newMessage) => {
-            if(newMessage.senderId !== selectedUser._id) return;
+            const senderId = String(newMessage.senderId);
+            const receiverId = String(newMessage.receiverId);
+            const selectedId = String(selectedUser._id);
+            const myId = String(authUser?._id);
+            const isForThisChat =
+                (senderId === selectedId && receiverId === myId) ||
+                (senderId === myId && receiverId === selectedId);
+            if (!isForThisChat) return;
             set({ messages: [...get().messages, newMessage] });
         });
     },

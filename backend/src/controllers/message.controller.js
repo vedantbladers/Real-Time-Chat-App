@@ -73,10 +73,14 @@ export const sendMessages = async (req, res) => {
 
         await newMessage.save()
 
-        //todo: Realtime functionality goes here using webSockets socket.io
-        const receiverSocketId = getReceiverSocketId(receiverId); 
-        if(receiverSocketId) {
+        // Realtime: notify both receiver and sender
+        const receiverSocketId = getReceiverSocketId(receiverId);
+        const senderSocketId = getReceiverSocketId(senderId);
+        if (receiverSocketId) {
             io.to(receiverSocketId).emit("newMessage", newMessage);
+        }
+        if (senderSocketId) {
+            io.to(senderSocketId).emit("newMessage", newMessage);
         }
 
         res.status(200).json(newMessage)
