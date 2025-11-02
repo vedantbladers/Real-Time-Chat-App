@@ -1,0 +1,20 @@
+runtime: nodejs20
+env: standard
+
+# Start the backend server from the backend folder
+entrypoint: npm --prefix backend start
+
+# Optional: tweak scaling as needed
+# automatic_scaling:
+#   max_instances: 3
+#   min_instances: 0
+
+# Set production mode. PORT is provided by App Engine.
+env_variables:
+  NODE_ENV: "production"
+  # FRONTEND_URL: "https://<your-frontend-domain>"  # Only if frontend is separate
+  # MONGO_URL: "<set-in-GCP-or-here>"
+  # JWT_SECRET: "<set-in-GCP-or-here>"
+  # CLOUDINARY_CLOUD_NAME: "<set-in-GCP-or-here>"
+  # CLOUDINARY_API_KEY: "<set-in-GCP-or-here>"
+  # CLOUDINARY_API_SECRET: "<set-in-GCP-or-here>"

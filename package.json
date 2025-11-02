@@ -1,4 +1,11 @@
 {
+  "name": "real-time-chat-app-deploy",
+  "private": true,
+  "scripts": {
+    "gcp-build": "npm --prefix frontend ci && npm --prefix frontend run build && npm --prefix backend ci"
+  }
+}
+{
   "name": "chat-app",
   "version": "1.0.0",
   "main": "index.js",
