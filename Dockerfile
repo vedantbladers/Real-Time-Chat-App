@@ -15,7 +15,7 @@ RUN npm ci --omit=dev
 
 # Frontend: install deps (use npm install to be tolerant of missing lockfile)
 WORKDIR /app/frontend
-RUN npm install --omit=dev
+RUN npm ci
 
 # Build frontend (output will be at /app/frontend/dist)
 WORKDIR /app/frontend
