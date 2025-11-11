@@ -1,25 +1,29 @@
+# Use Node 24 (latest LTS as of 2025)
 FROM node:24-bullseye
 
-# Create app directory
+# Set working directory
 WORKDIR /app
 
-# Copy package files for frontend/backend to leverage docker layer caching
-COPY frontend/package*.json ./frontend/
+# Backend: copy package files and install dependencies
 COPY backend/package*.json ./backend/
+WORKDIR /app/backend
+RUN npm ci --omit=dev
 
-# Install dependencies for frontend and backend
-RUN cd frontend && npm ci --omit=dev
-RUN cd ../backend && npm ci --omit=dev
+# Frontend: copy package files, install deps
+COPY frontend/package*.json ./frontend/
+WORKDIR /app/frontend
+RUN npm ci --omit=dev
 
-# Copy the rest of the source
-COPY . .
+# Copy full sources after deps to take advantage of layer caching
+COPY backend/ ./backend/
+COPY frontend/ ./frontend/
 
-# Build frontend
-RUN npm --prefix frontend run build
+# Build frontend (output will be at /app/frontend/dist)
+WORKDIR /app/frontend
+RUN npm run build
 
-# Expose port (Cloud Run uses 8080 by default)
+# Expose port and start backend
 ENV PORT=8080
 EXPOSE 8080
-
-# Start the backend server
-CMD ["node", "backend/src/index.js"]
+WORKDIR /app/backend
+CMD ["npm", "start"]
