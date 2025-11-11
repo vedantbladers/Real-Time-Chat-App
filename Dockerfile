@@ -12,7 +12,8 @@ RUN npm ci --omit=dev
 # Frontend: copy package files, install deps
 COPY frontend/package*.json ./frontend/
 WORKDIR /app/frontend
-RUN npm ci --omit=dev
+# Use `npm install` for frontend when package-lock.json may be missing in the build context
+RUN npm install --omit=dev
 
 # Copy full sources after deps to take advantage of layer caching
 COPY backend/ ./backend/
