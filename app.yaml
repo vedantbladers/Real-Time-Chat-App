@@ -1,5 +1,6 @@
-runtime: nodejs20
-env: standard
+# Use the flexible environment for stable WebSocket support (Socket.IO)
+runtime: nodejs
+env: flex
 
 # Start the backend server from the backend folder
 entrypoint: npm --prefix backend start
