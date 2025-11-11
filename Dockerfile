@@ -4,20 +4,18 @@ FROM node:24-bullseye
 # Set working directory
 WORKDIR /app
 
-# Backend: copy package files and install dependencies
-COPY backend/package*.json ./backend/
+# Copy full sources first to ensure build context includes all files
+# (keeps things simple for Cloud Build/App Engine environment)
+COPY backend/ ./backend/
+COPY frontend/ ./frontend/
+
+# Backend: install dependencies
 WORKDIR /app/backend
 RUN npm ci --omit=dev
 
-# Frontend: copy package files, install deps
-COPY frontend/package*.json ./frontend/
+# Frontend: install deps (use npm install to be tolerant of missing lockfile)
 WORKDIR /app/frontend
-# Use `npm install` for frontend when package-lock.json may be missing in the build context
 RUN npm install --omit=dev
-
-# Copy full sources after deps to take advantage of layer caching
-COPY backend/ ./backend/
-COPY frontend/ ./frontend/
 
 # Build frontend (output will be at /app/frontend/dist)
 WORKDIR /app/frontend
